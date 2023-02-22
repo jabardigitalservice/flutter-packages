@@ -6,18 +6,18 @@ import 'package:path/path.dart' as path;
 import 'db.dart';
 
 class Mime {
-  static Future<File> changeExtensionFile(String tmpPathFile) async {
+  static Future<String> changeExtensionFile(String tmpPathFile) async {
     File data = File(tmpPathFile);
-    final mime =
-        lookupMimeType('temp', headerBytes: await data.readAsBytes());
+    final mime = lookupMimeType('temp', headerBytes: await data.readAsBytes());
     final ext = _getExtensionsFromType(mime);
     if (ext != null) {
       String dir = path.dirname(data.path);
-      String newPath = path.join(
-          dir, path.basenameWithoutExtension(data.path) + ext);
-      return await data.rename(newPath);
+      String newPath =
+          path.join(dir, path.basenameWithoutExtension(data.path) + ext);
+      await data.rename(newPath);
+      return newPath;
     }
-    return data;
+    return tmpPathFile;
   }
 
   static String? _getExtensionsFromType(String? type) {
