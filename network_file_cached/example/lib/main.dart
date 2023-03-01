@@ -1,7 +1,13 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
 import 'package:network_file_cached/network_file_cached.dart';
 
-void main() {
+void main() async {
+  await NetworkFileCached.init(
+    expired: const Duration(minutes: 5),
+  );
   runApp(
     const MaterialApp(
       home: FileCache(),
@@ -25,6 +31,18 @@ class _FileCacheState extends State<FileCache> {
         appBar: AppBar(
           title: const Text('Plugin example apps'),
         ),
-        body: NetworkPDFCached(filePath: uri));
+        body: FutureBuilder(
+            future: NetworkFileCached.downloadFile(uri),
+            builder: (context, snapshoot) {
+              if (snapshoot.hasData) {
+                return PDFView(
+                  pdfData: snapshoot.data?.readAsBytesSync(),
+                );
+              }
+              if (snapshoot.hasError) {
+                return Text(snapshoot.error.toString());
+              }
+              return const Text('LOADING...');
+            }));
   }
 }
