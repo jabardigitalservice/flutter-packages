@@ -1,5 +1,6 @@
 
 ## Usage
+Usage example with PDFView to display cached pdf files.
 
 ```dart
 
