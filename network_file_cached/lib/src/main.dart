@@ -11,7 +11,7 @@ class NetworkFileCached {
   NetworkFileCached._internal(this._expired);
 
   /// TAG for logging
-  static const String TAG = 'NetworkFileCached';
+  static const String tag = 'NetworkFileCached';
 
   /// The duration of the file to be cached before being updated
   final Duration _expired;
@@ -68,15 +68,15 @@ class NetworkFileCached {
     _record = _box?.get(url);
 
     if (_record == null) {
-      debugPrint('$TAG = Downloading... Create a new cache');
+      debugPrint('$tag = Downloading... Create a new cache');
       await instance._downloadAndPut(onReceiveProgress);
-      debugPrint('$TAG = New cache has been created');
+      debugPrint('$tag = New cache has been created');
     } else if (_record != null &&
         _record!.createdAt.add(instance._expired).isBefore(DateTime.now())) {
       await instance._deleteCache();
     }
 
-    debugPrint('$TAG = Cache loaded');
+    debugPrint('$tag = Cache loaded');
 
     return File(_record!.path);
   }
@@ -93,15 +93,15 @@ class NetworkFileCached {
 
   /// Delete the local file and meta data record from box.
   Future<void> _deleteCache() async {
-    debugPrint('$TAG = Some cache has expired, update cache');
+    debugPrint('$tag = Some cache has expired, update cache');
     CacheRecord oldValue = _box?.get(_url);
     _box?.delete(_url);
     await _downloadAndPut(null);
     try {
       await File(oldValue.path).delete();
-      debugPrint('$TAG = Cache has been updated, old cache deleted');
+      debugPrint('$tag = Cache has been updated, old cache deleted');
     } catch (e) {
-      debugPrint('$TAG = ${e.toString()}');
+      debugPrint('$tag = ${e.toString()}');
     }
   }
 
