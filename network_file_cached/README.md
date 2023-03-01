@@ -1,15 +1,51 @@
-# network_file_cached
 
-A flutter library to download and cache files in the cache directory of the app.
+## Usage
 
-## Getting Started
+```dart
 
-This project is a starting point for a Flutter
-[plug-in package](https://flutter.dev/developing-packages/),
-a specialized package that includes platform-specific implementation code for
-Android and/or iOS.
+import 'package:flutter/material.dart';
+import 'package:flutter_pdfview/flutter_pdfview.dart';
+import 'package:network_file_cached/network_file_cached.dart';
 
-For help getting started with Flutter development, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+void main() async {
+  await NetworkFileCached.init(
+    expired: const Duration(minutes: 5),
+  );
+  runApp(
+    const MaterialApp(
+      home: FileCache(),
+    ),
+  );
+}
 
+class FileCache extends StatefulWidget {
+  const FileCache({super.key});
+
+  @override
+  State<FileCache> createState() => _FileCacheState();
+}
+
+class _FileCacheState extends State<FileCache> {
+  String uri = 'https://s.id/1zvyC';
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          title: const Text('Plugin example apps'),
+        ),
+        body: FutureBuilder(
+            future: NetworkFileCached.downloadFile(uri),
+            builder: (context, snapshoot) {
+              if (snapshoot.hasData) {
+                return PDFView(
+                  pdfData: snapshoot.data?.readAsBytesSync(),
+                );
+              }
+              if (snapshoot.hasError) {
+                return Text(snapshoot.error.toString());
+              }
+              return const Text('LOADING...');
+            }));
+  }
+}
