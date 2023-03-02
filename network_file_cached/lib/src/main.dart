@@ -92,14 +92,14 @@ class NetworkFileCached {
     String path =
         await IO.downloadFile(_url, onReceiveProgress: onReceiveProgress);
     _record = CacheRecord(_url, path, DateTime.now());
-    _box?.put(_url, _record);
+    await _box?.put(_url, _record);
   }
 
   /// Delete the local file and meta data record from box.
   Future<void> _deleteCache() async {
     debugPrint('$tag = Some cache has expired, update cache');
     CacheRecord oldValue = _box?.get(_url);
-    _box?.delete(_url);
+    await _box?.delete(_url);
     await _downloadAndPut(null);
     try {
       await File(oldValue.path).delete();

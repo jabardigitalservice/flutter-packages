@@ -4,7 +4,7 @@ import 'package:network_file_cached/network_file_cached.dart';
 
 void main() async {
   await NetworkFileCached.init(
-    expired: const Duration(minutes: 5),
+    expired: const Duration(seconds: 5),
   );
   runApp(
     const MaterialApp(
