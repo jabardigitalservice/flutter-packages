@@ -9,3 +9,7 @@
 ## 0.0.3
 
 * Added some await future
+
+## 0.0.4
+
+* Update example
