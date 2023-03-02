@@ -44,9 +44,9 @@ class NetworkFileCached {
 
     WidgetsFlutterBinding.ensureInitialized();
 
-    var cahceDir = await getTemporaryDirectory();
+    var cacheDir = await getTemporaryDirectory();
 
-    Hive.init(cahceDir.path);
+    Hive.init(cacheDir.path);
     Hive.registerAdapter(CacheRecordAdapter());
     _box = await Hive.openBox('NetworkFileCached');
     _instance = NetworkFileCached._internal(expired);
@@ -74,6 +74,10 @@ class NetworkFileCached {
     } else if (_record != null &&
         _record!.createdAt.add(instance._expired).isBefore(DateTime.now())) {
       await instance._deleteCache();
+    }
+
+    if (!await File(_record!.path).exists()) {
+      await instance._downloadAndPut(onReceiveProgress);
     }
 
     debugPrint('$tag = Cache loaded');
