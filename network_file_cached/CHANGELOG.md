@@ -5,3 +5,7 @@
 ## 0.0.2
 
 * Lost file check.
+
+## 0.0.3
+
+* Added some await future
