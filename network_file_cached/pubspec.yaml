@@ -1,7 +1,7 @@
 name: network_file_cached
 description: A flutter library to download and cache files in the cache
   directory of the app.
-version: 0.0.1
+version: 0.0.2
 homepage: https://github.com/jabardigitalservice/flutter-packages/tree/main/network_file_cached
 repository: https://github.com/jabardigitalservice/flutter-packages/tree/main/network_file_cached
 issue_tracker: https://github.com/jabardigitalservice/flutter-packages/labels/Network%20File%20Cached
