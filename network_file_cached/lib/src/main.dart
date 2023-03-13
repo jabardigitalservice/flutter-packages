@@ -73,7 +73,7 @@ class NetworkFileCached {
       debugPrint('$tag = New cache has been created');
     } else if (_record != null &&
         _record!.createdAt.add(instance._expired).isBefore(DateTime.now())) {
-      await instance._deleteCache();
+      await instance._deleteCache(onReceiveProgress);
     }
 
     if (!await File(_record!.path).exists()) {
@@ -96,11 +96,11 @@ class NetworkFileCached {
   }
 
   /// Delete the local file and meta data record from box.
-  Future<void> _deleteCache() async {
+  Future<void> _deleteCache(void Function(int, int)? onReceiveProgress) async {
     debugPrint('$tag = Some cache has expired, update cache');
     CacheRecord oldValue = _box?.get(_url);
     await _box?.delete(_url);
-    await _downloadAndPut(null);
+    await _downloadAndPut(onReceiveProgress);
     try {
       await File(oldValue.path).delete();
       debugPrint('$tag = Cache has been updated, old cache deleted');
