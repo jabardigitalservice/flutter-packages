@@ -12,45 +12,13 @@ and the Flutter guide for
 -->
 
 <p align="center">
- <img
- src="https://raw.githubusercontent.com/jabardigitalservice/flutter-packages/tree/main/jabar_design_system/master/assets/header.svg"
- height="60" alt="Header image"
- />
+	<img src="https://raw.githubusercontent.com/jabardigitalservice/flutter-packages/main/jabar_design_system/assets/header.svg" height="60" alt="Header image" />
 </p>
-<p
- align="center"
->
- <a
- href="https://pub.dev/packages/jabar_design_system"
- >
-  <img
-   src="https://img.shields.io/pub/v/jabar_design_system.svg"
-   alt="Pub.dev Badge">
- </a>
-
- <a
-  href="https://github.com/jabardigitalservice/flutter-packages/tree/main/jabar_design_system/actions"
- >
-  <img
-   src="https://github.com/jabardigitalservice/flutter-packages/tree/main/jabar_design_system/workflows/main/badge.svg"
-   alt="GitHub Build Badge">
- </a>
-
- <a
-  href="https://opensource.org/licenses/MIT"
- >
-  <img
-   src="https://img.shields.io/badge/license-MIT-purple.svg"
-   alt="MIT License Badge">
- </a>
-
- <a
-  href="https://github.com/jabardigitalservice/flutter-packages/tree/main/jabar_design_system"
- >
-  <img
-   src="https://img.shields.io/badge/platform-flutter-ff69b4.svg"
-   alt="Flutter Platform Badge">
- </a>
+<p align="center">
+	<a href="https://pub.dev/packages/jabar_design_system"><img src="https://img.shields.io/pub/v/jabar_design_system.svg" alt="Pub.dev Badge"></a>
+	<a href="https://github.com/jabardigitalservice/flutter-packages/actions"><img src="https://github.com//jabardigitalservice/flutter-packages/workflows/main/badge.svg" alt="GitHub Build Badge"></a>
+	<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="MIT License Badge"></a>
+	<a href="https://github.com/jabardigitalservice/flutter-packages/tree/main/jabar_design_system"><img src="https://img.shields.io/badge/platform-flutter-ff69b4.svg" alt="Flutter Platform Badge"></a>
 </p>
 
 # Jabar Design System
@@ -62,12 +30,24 @@ for designers and developers in West Java (ID) to develop uniform products.
 
 ## Features
 
+- Import
+
+```dart
+import 'package:jabar_design_system/jabar_design_system.dart';
+```
+
 - Colors (Primary, Secondary, Neutral, etc)
 
 ```dart
-import 'package:jabar_design_system/colors.dart';
+Container(color: Jds.colors.primary.green,)
+```
 
-const theColor = JdsColors.primary.blue;
+- Text Theme (Sans Serif, Sans Serif Alt, Serif)
+
+```dart
+import 'package:jabar_design_system/jabar_design_system.dart';
+
+Text('Jabar Design System', style: Jds.textTheme.sansSerif.bodyMedium)
 ```
 
 ## Additional information

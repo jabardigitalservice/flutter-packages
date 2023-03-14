@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.0.2+1
+
+- updated documentation.
+- updated github workflows.
+
 ## 0.0.2
 
 - added TextTheme.
