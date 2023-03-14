@@ -16,7 +16,7 @@ and the Flutter guide for
 </p>
 <p align="center">
 	<a href="https://pub.dev/packages/jabar_design_system"><img src="https://img.shields.io/pub/v/jabar_design_system.svg" alt="Pub.dev Badge"></a>
-	<a href="https://github.com/jabardigitalservice/flutter-packages/actions"><img src="https://github.com//jabardigitalservice/flutter-packages/workflows/main/badge.svg" alt="GitHub Build Badge"></a>
+	<a href="https://github.com/jabardigitalservice/flutter-packages/actions"><img src="https://github.com/jabardigitalservice/flutter-packages/actions/workflows/jabar_design_system.yml/badge.svg" alt="GitHub Build Badge"></a>
 	<a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/badge/license-MIT-purple.svg" alt="MIT License Badge"></a>
 	<a href="https://github.com/jabardigitalservice/flutter-packages/tree/main/jabar_design_system"><img src="https://img.shields.io/badge/platform-flutter-ff69b4.svg" alt="Flutter Platform Badge"></a>
 </p>
