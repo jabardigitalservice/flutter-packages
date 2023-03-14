@@ -1,6 +1,6 @@
 name: jabar_design_system
 description: Official Jabar Design System package for Flutter. Work in progress.
-version: 0.0.2+2
+version: 0.0.2+3
 homepage: https://github.com/jabardigitalservice/flutter-packages/tree/main/jabar_design_system
 
 environment:

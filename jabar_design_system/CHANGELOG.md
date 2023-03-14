@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.0.2+3
+
+- updated license.
+
 ## 0.0.2+2
 
 - updated documentation.
