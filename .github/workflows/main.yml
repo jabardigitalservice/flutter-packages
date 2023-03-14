@@ -1,0 +1,24 @@
+name: Build Jabar Design System
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-java@v2
+        with:
+          distribution: "zulu"
+          java-version: "11"
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: "stable"
+          cache: true
+      - run: cd jabar_design_system
+      - run: flutter pub get
+      - run: flutter test
+      - run: flutter analyze
