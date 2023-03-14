@@ -13,3 +13,13 @@
 ## 0.0.4
 
 * Update example
+
+## 0.0.5
+
+* Update code on readme
+
+## 0.0.6
+
+* Fix on receive progress
+* Update example
+* Update readme
