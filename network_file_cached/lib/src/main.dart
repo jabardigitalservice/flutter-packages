@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/widgets.dart';
-import 'package:hive/hive.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import 'package:network_file_cached/src/io.dart';
 import 'package:network_file_cached/src/record.dart';
 import 'package:path_provider/path_provider.dart';
@@ -46,7 +46,7 @@ class NetworkFileCached {
 
     var cacheDir = await getTemporaryDirectory();
 
-    Hive.init(cacheDir.path);
+    Hive.initFlutter(cacheDir.path);
     Hive.registerAdapter(CacheRecordAdapter());
     _box = await Hive.openBox('NetworkFileCached');
     _instance = NetworkFileCached._internal(expired);
