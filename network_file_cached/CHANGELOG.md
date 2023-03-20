@@ -23,3 +23,7 @@
 * Fix on receive progress
 * Update example
 * Update readme
+
+## 0.0.7
+
+* Fix: Unknown hive register adapter
