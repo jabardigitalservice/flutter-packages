@@ -17,7 +17,7 @@ class CrashlyticsHandler {
     }
   }
 
-  // Report custom
+  // Send custom error
   static Future<void> captureCustomError(
     String tag,
     String message, {
