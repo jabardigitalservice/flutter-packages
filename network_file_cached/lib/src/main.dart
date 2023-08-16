@@ -19,6 +19,9 @@ class NetworkFileCached {
   /// Provide the [_url] for the file to cache
   static late String _url;
 
+  /// Provide the [_additionalKeyName] to put meta data of the cached file into the box (local database).
+  static String? _additionalKeyName;
+
   /// Model helper for cached files
   static CacheRecord? _record;
 
@@ -46,7 +49,8 @@ class NetworkFileCached {
 
     var cacheDir = await getTemporaryDirectory();
 
-    Hive.initFlutter(cacheDir.path);
+    await Hive.initFlutter(cacheDir.path);
+
     Hive.registerAdapter(CacheRecordAdapter());
     _box = await Hive.openBox('NetworkFileCached');
     _instance = NetworkFileCached._internal(expired);
@@ -56,16 +60,20 @@ class NetworkFileCached {
   /// Download the file with default http method is "GET",
   /// [url] is the file url.
   /// [onReceiveProgress] is the callback to listen downloading progress.
-  static Future<File> downloadFile(String url,
-      {void Function(int, int)? onReceiveProgress}) async {
+  static Future<File> downloadFile(
+    String url, {
+    String? additionalKeyName,
+    void Function(int, int)? onReceiveProgress,
+  }) async {
     if (_instance == null) {
       throw Exception(
           'NetworkFileCached must be initialized first. \nNetworkFileCached.init()');
     }
 
     _url = url;
+    _additionalKeyName = additionalKeyName;
 
-    _record = _box?.get(url);
+    _record = _box?.get('${url}_${additionalKeyName ?? ''}');
 
     if (_record == null) {
       debugPrint('$tag = Downloading... Create a new cache');
@@ -92,14 +100,14 @@ class NetworkFileCached {
     String path =
         await IO.downloadFile(_url, onReceiveProgress: onReceiveProgress);
     _record = CacheRecord(_url, path, DateTime.now());
-    await _box?.put(_url, _record);
+    await _box?.put('${_url}_${_additionalKeyName ?? ''}', _record);
   }
 
   /// Delete the local file and meta data record from box.
   Future<void> _deleteCache(void Function(int, int)? onReceiveProgress) async {
     debugPrint('$tag = Some cache has expired, update cache');
-    CacheRecord oldValue = _box?.get(_url);
-    await _box?.delete(_url);
+    CacheRecord oldValue = _box?.get('${_url}_${_additionalKeyName ?? ''}');
+    await _box?.delete('${_url}_${_additionalKeyName ?? ''}');
     await _downloadAndPut(onReceiveProgress);
     try {
       await File(oldValue.path).delete();
