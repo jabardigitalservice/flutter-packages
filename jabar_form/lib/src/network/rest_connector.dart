@@ -27,11 +27,11 @@ class RestConnector {
     try {
       Dio dio = Dio()
         ..interceptors.add(PrettyDioLogger(
-          requestHeader: false,
-          requestBody: false,
-          responseBody: false,
-          responseHeader: false,
-          compact: false,
+          requestHeader: true,
+          requestBody: true,
+          responseBody: true,
+          responseHeader: true,
+          compact: true,
         ));
 
       String? token = JabarForm.instance.getAccessToken();

@@ -5,11 +5,11 @@ import 'package:jabar_form/src/network/api_service.dart';
 class JFCubit extends Cubit<JFState> {
   JFCubit() : super(JFStateInit());
 
-  Future<void> getJFData(String slug) async {
+  Future<void> getJFData(String baseUrl, String slug) async {
     emit(JFStateLoading());
     try {
       // Await the result of getFormSurvey
-      final formData = await ApiService().getForm(slug);
+      final formData = await ApiService(baseUrl: baseUrl).getForm(slug);
       if (formData != null) {
         // Form data is not null, so emit a success state
         emit(JFStateSuccess(formData));

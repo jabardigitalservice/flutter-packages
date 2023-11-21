@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
+import 'package:jabar_form/src/utils/validation.dart';
 // import 'package:form_builder_validators/form_builder_validators.dart';
 
 typedef ComboBoxMapCallback = void Function(
@@ -115,22 +116,8 @@ class _JabarFromCheckboxState extends State<JabarFromCheckbox> {
             child: FormBuilderTextField(
               name: 'Lainnya',
               maxLines: 3,
-              validator: (val) {
-                if (widget.rules['required'] && val == null) {
-                  return 'Wajib diisi!';
-                }
-
-                if (widget.rules['max_length'] != null &&
-                    val!.length > widget.rules['max_length']) {
-                  return 'Maksimal ${widget.rules['max_length']} karakter';
-                }
-
-                if (widget.rules['min_length'] != null &&
-                    val!.length < widget.rules['min_length']) {
-                  return 'Minimal ${widget.rules['max_length']} karakter';
-                }
-
-                return null;
+              validator: (value) {
+                return JFValidation.validate(widget.rules, value);
               },
               decoration: InputDecoration(
                 hintText: widget.hintText,

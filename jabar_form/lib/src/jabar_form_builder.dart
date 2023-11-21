@@ -4,6 +4,7 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:jabar_form/jabar_form.dart';
 import 'package:jabar_form/src/bloc/jf_cubit.dart';
 import 'package:jabar_form/src/bloc/jf_state.dart';
+import 'package:jabar_form/src/controller/jabar_form_builder_controller.dart';
 import 'package:jabar_form/src/network/api_endpoint.dart';
 import 'package:jabar_form/src/network/api_service.dart';
 import 'package:jabar_form/src/network/models/request/answer.dart';
@@ -40,19 +41,14 @@ class JabarFormBuilder extends StatefulWidget {
 
 class _JabarFormBuilderState extends State<JabarFormBuilder>
     with TickerProviderStateMixin {
+  final JFBuilderController _jfBuilderController =
+      JFBuilderController(questions: []);
+
   final _formKey = GlobalKey<FormBuilderState>();
-  bool hasErrorValidation = true;
-
-  List<Question> questions = [];
-  List<Answer> answers = [];
-
   bool isBusy = false;
 
   @override
   void initState() {
-    Future.delayed(const Duration(seconds: 2), () {
-      initMetadata();
-    });
     super.initState();
   }
 
@@ -64,14 +60,21 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
         builder: (context, state) {
           if (state is JFStateInit) {
             // You can call your service here when the widget initializes.
-            context.read<JFCubit>().getJFData(widget.slug);
+            context.read<JFCubit>().getJFData(widget.baseUrl, widget.slug);
             return const Center(child: CircularProgressIndicator());
           } else if (state is JFStateLoading) {
             return const Center(child: CircularProgressIndicator());
           } else if (state is JFStateSuccess) {
             // Handle your successful state, for example, display survey data.
             final surveyData = state.jfData;
-            questions = surveyData.data!.questions!;
+
+            _jfBuilderController.questions = surveyData.data!.questions!;
+
+            _jfBuilderController.initMetadata(
+              username: widget.username,
+              source: widget.source,
+              metadata: widget.metadata,
+            );
 
             return formBuilder(context, surveyData.data!.questions!);
           } else if (state is JFStateError) {
@@ -86,24 +89,6 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
     );
   }
 
-  Widget errorBuilder() {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Image.asset(
-            const AssetImage('assets/icons/rating_3_active_icon.png').assetName,
-            package: 'jabar_form',
-            width: 80,
-            height: 80,
-          ),
-          const Text('Koneksi server error, silahkan coba beberapa saat lagi'),
-        ],
-      ),
-    );
-  }
-
   Widget formBuilder(BuildContext context, List<Question> questions) {
     return FormBuilder(
       key: _formKey,
@@ -114,7 +99,7 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
                 shrinkWrap: true,
                 itemCount: questions.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return isHiddenField(
+                  return _jfBuilderController.isHiddenField(
                               tag: questions[index].tag,
                               label: questions[index].label) ||
                           !questions[index].isActive
@@ -122,7 +107,7 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
                       : Padding(
                           padding: const EdgeInsets.symmetric(
                               vertical: 8, horizontal: 20),
-                          child: buildField(
+                          child: fieldBuilder(
                             uuidForm: questions[index].uuidSurvey,
                             uuidQuestion: questions[index].uuid,
                             type: questions[index].type,
@@ -137,6 +122,93 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
         ],
       ),
     );
+  }
+
+  Widget fieldBuilder({
+    required String uuidForm,
+    required String uuidQuestion,
+    required String type,
+    required String label,
+    List<dynamic>? options,
+    Map<String, dynamic>? rules,
+  }) {
+    switch (type) {
+      case 'title':
+        return Text(
+          label,
+          style: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      case 'text':
+        return JabarFromTextField(
+          label: label,
+          callback: (val) {},
+        );
+      case 'textarea':
+        return JabarFromTextArea(label: label);
+      case 'scale_rating':
+        return JabarFromScaleRating(
+          label: label,
+          callback: (val) {
+            Answer data = Answer(
+              uuidSurvey: uuidForm,
+              uuidQuestion: uuidQuestion,
+              type: type,
+              value: val,
+            );
+            _jfBuilderController.updateOrPushAnswer(data);
+
+            setState(() {
+              _jfBuilderController.validate();
+            });
+          },
+        );
+      case 'checkbox':
+        return JabarFromCheckbox(
+          label: label,
+          options: options ?? [],
+          rules: rules ?? {},
+          hintText: 'Sampaikan hal yang perlu kami perbaiki',
+          callback: (selectedValue, textareaValue) {
+            Answer data = Answer(
+              uuidSurvey: uuidForm,
+              uuidQuestion: uuidQuestion,
+              type: type,
+              value: selectedValue,
+            );
+
+            _jfBuilderController.updateOrPushAnswer(data);
+
+            if (textareaValue != null) {
+              // NEED CONTRACT LABEL NAME / TAG FOR "LAINNYA" FORM
+              String targetLabel = 'Sampaikan hal yang perlu kami perbaiki';
+              List<Question> feedbackField =
+                  _jfBuilderController.questions.where((question) {
+                return question.label == targetLabel || question.tag == 'other';
+              }).toList();
+
+              if (feedbackField.isNotEmpty) {
+                Answer feedbackData = Answer(
+                  uuidSurvey: feedbackField.first.uuidSurvey,
+                  uuidQuestion: feedbackField.first.uuid,
+                  type: feedbackField.first.type,
+                  value: textareaValue,
+                );
+
+                _jfBuilderController.updateOrPushAnswer(feedbackData);
+              }
+            }
+
+            setState(() {
+              _jfBuilderController.validate();
+            });
+          },
+        );
+      default:
+        return const SizedBox.shrink();
+    }
   }
 
   Widget actionButton() {
@@ -167,11 +239,11 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
           SizedBox(
             width: (MediaQuery.of(context).size.width / 2) - 40,
             child: ElevatedButton(
-              style: hasErrorValidation
+              style: _jfBuilderController.isHasErrorValidation()
                   ? CustomButtonStyle().disableRaisedButtonStyle
                   : CustomButtonStyle().raisedButtonStyle,
               onPressed: () async {
-                if (hasErrorValidation) return;
+                if (_jfBuilderController.isHasErrorValidation()) return;
 
                 if (mounted) {
                   setState(() {
@@ -182,9 +254,9 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
                 DateTime now = DateTime.now();
                 int epochTime = now.millisecondsSinceEpoch;
 
-                ApiService()
+                ApiService(baseUrl: widget.baseUrl)
                     .submit(SubmitRequest(
-                  answers: answers,
+                  answers: _jfBuilderController.answers,
                   submittedTime: epochTime,
                 ))
                     .then((value) {
@@ -230,182 +302,21 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
     );
   }
 
-  Widget buildField({
-    required String uuidForm,
-    required String uuidQuestion,
-    required String type,
-    required String label,
-    List<dynamic>? options,
-    Map<String, dynamic>? rules,
-  }) {
-    switch (type) {
-      case 'title':
-        return Text(
-          label,
-          style: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
+  Widget errorBuilder() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Image.asset(
+            const AssetImage('assets/icons/rating_3_active_icon.png').assetName,
+            package: 'jabar_form',
+            width: 80,
+            height: 80,
           ),
-        );
-      case 'text':
-        return JabarFromTextField(
-          label: label,
-          callback: (val) {},
-        );
-      case 'textarea':
-        return JabarFromTextArea(
-          label: label,
-        );
-      case 'scale_rating':
-        return JabarFromScaleRating(
-          label: label,
-          callback: (val) {
-            Answer data = Answer(
-              uuidSurvey: uuidForm,
-              uuidQuestion: uuidQuestion,
-              type: type,
-              value: val,
-            );
-            updateOrPushObject(data);
-            validate();
-          },
-        );
-      case 'checkbox':
-        return JabarFromCheckbox(
-          label: label,
-          options: options ?? [],
-          rules: rules ?? {},
-          hintText: 'Sampaikan hal yang perlu kami perbaiki',
-          callback: (selectedValue, textareaValue) {
-            Answer data = Answer(
-              uuidSurvey: uuidForm,
-              uuidQuestion: uuidQuestion,
-              type: type,
-              value: selectedValue,
-            );
-
-            updateOrPushObject(data);
-
-            if (textareaValue != null) {
-              // NEED CONTRACT LABEL NAME / TAG FOR "LAINNYA" FORM
-              String targetLabel = 'Sampaikan hal yang perlu kami perbaiki';
-              List<Question> feedbackField = questions.where((question) {
-                return question.label == targetLabel;
-              }).toList();
-
-              Answer feedbackData = Answer(
-                uuidSurvey: feedbackField.first.uuidSurvey,
-                uuidQuestion: feedbackField.first.uuid,
-                type: feedbackField.first.type,
-                value: textareaValue,
-              );
-
-              updateOrPushObject(feedbackData);
-            }
-
-            validate();
-          },
-        );
-      default:
-        return const SizedBox.shrink();
-    }
-  }
-
-  bool validate() {
-    List<bool> validationResult = [];
-
-    for (var element in questions) {
-      Answer? answer = getAnswerByUUID(element.uuid);
-
-      if (element.rules?['required'] &&
-          element.type != 'title' &&
-          !isHiddenField(tag: element.tag)) {
-        if (answer == null) {
-          validationResult.add(true);
-        } else {
-          if (element.type == 'checkbox') {
-            List<dynamic> values = answer.value;
-            if (values.isEmpty) validationResult.add(true);
-          }
-
-          if (element.type == 'scale_rating' || element.type == 'textarea') {
-            if (answer.value == '' || answer.value == null) {
-              validationResult.add(true);
-            }
-          }
-        }
-      }
-    }
-
-    setState(() {
-      hasErrorValidation = validationResult.contains(true);
-    });
-
-    return hasErrorValidation;
-  }
-
-  Answer? getAnswerByUUID(String uuidQuestion) {
-    int existingIndex = answers.indexWhere((element) {
-      return element.uuidQuestion == uuidQuestion;
-    });
-
-    if (existingIndex != -1) {
-      return answers[existingIndex];
-    } else {
-      return null;
-    }
-  }
-
-  void updateOrPushObject(Answer newAnswer) {
-    String? targetUuidQuestion = newAnswer.uuidQuestion;
-
-    int existingIndex = answers.indexWhere((element) {
-      return element.uuidQuestion == targetUuidQuestion;
-    });
-
-    if (existingIndex != -1) {
-      // Replace the existing object with the new one
-      answers[existingIndex] = newAnswer;
-    } else {
-      // Push the new object into the array
-      answers.add(newAnswer);
-    }
-  }
-
-  void initMetadata() {
-    if (widget.username != null) {
-      addMetadataByLabel('username', widget.username);
-    }
-
-    if (widget.source != null) {
-      addMetadataByLabel('source', widget.source);
-    }
-
-    if (widget.metadata != null) {
-      addMetadataByLabel('metadata', widget.metadata);
-    }
-  }
-
-  void addMetadataByLabel(String label, dynamic value) {
-    int existingIndex = questions.indexWhere((element) {
-      return element.label.toString().toLowerCase() == label.toLowerCase();
-    });
-
-    if (existingIndex != -1) {
-      answers.add(Answer(
-        uuidSurvey: questions[existingIndex].uuidSurvey,
-        uuidQuestion: questions[existingIndex].uuid,
-        type: questions[existingIndex].type,
-        value: value,
-      ));
-    }
-  }
-
-  bool isHiddenField({String? tag, String? label}) {
-    List<String> listHiddenLabel = Constants.listHiddenLabel;
-    List<String> listHiddenTag = Constants.listHiddenTag;
-
-    return listHiddenTag.contains(tag?.toLowerCase()) ||
-        listHiddenLabel.contains(label?.toLowerCase());
+          const Text('Koneksi server error, silahkan coba beberapa saat lagi'),
+        ],
+      ),
+    );
   }
 }

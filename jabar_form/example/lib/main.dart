@@ -63,19 +63,16 @@ class _MyHomePageState extends State<MyHomePage> {
               const TextStyle(color: Colors.white, fontWeight: FontWeight.w800),
         ),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Center(
-          // Center is a layout widget. It takes a single child and positions it
-          // in the middle of the parent.
-          child: JabarFormBuilder(
-            slug: 'SurveyFiturTTESidebar',
-            username: 'testingsidebar',
-            source: 'mobile',
-            onSubmit: (val) {},
-            onCancel: () {},
-            onError: () {},
-          ),
+      body: Center(
+        // Center is a layout widget. It takes a single child and positions it
+        // in the middle of the parent.
+        child: JabarFormBuilder(
+          slug: 'SurveyFiturTTESidebar',
+          username: 'testingsidebar',
+          source: 'mobile',
+          onSubmit: (val) {},
+          onCancel: () {},
+          onError: () {},
         ),
       ),
     );

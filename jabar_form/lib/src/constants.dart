@@ -4,15 +4,15 @@ class Constants {
 
   static List<String> listHiddenLabel = [
     'sampaikan hal yang perlu kami perbaiki',
-    'sampaikan hal perlu kami perbaiki',
     'metadata',
-    'nama user',
-    'role',
-    'wilayah',
     'source',
+    'meta-source',
+    'meta-user-id',
+    'meta-role',
+    'meta-role',
   ];
 
-  static List<String> listHiddenTag = ['hidden'];
+  static List<String> listHiddenTag = ['hidden', 'meta'];
 }
 
 enum FieldType {

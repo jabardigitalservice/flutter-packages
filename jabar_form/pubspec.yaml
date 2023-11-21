@@ -11,7 +11,6 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_form_builder: ^8.0.0
-  # form_builder_validators: ^8.6.1
   dio: ^5.3.3
   flutter_bloc: ^7.1.0
   equatable: ^2.0.5
