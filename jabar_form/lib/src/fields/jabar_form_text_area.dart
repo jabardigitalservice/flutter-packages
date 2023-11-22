@@ -3,10 +3,14 @@ import 'package:flutter_form_builder/flutter_form_builder.dart';
 
 class JabarFromTextArea extends StatelessWidget {
   final String label;
+  final int index;
+  final ScrollController scrollController;
 
   const JabarFromTextArea({
     super.key,
     required this.label,
+    required this.index,
+    required this.scrollController,
   });
 
   @override
@@ -33,6 +37,12 @@ class JabarFromTextArea extends StatelessWidget {
         FormBuilderTextField(
           name: label,
           maxLines: 3,
+          onTap: () {
+            double heightOfTextfield = 80;
+            scrollController.animateTo(index * heightOfTextfield,
+                duration: const Duration(milliseconds: 100),
+                curve: Curves.easeOutCubic);
+          },
           decoration: InputDecoration(
             hintText: label,
             contentPadding: const EdgeInsets.symmetric(

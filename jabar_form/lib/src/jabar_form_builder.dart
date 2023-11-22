@@ -19,6 +19,7 @@ class JabarFormBuilder extends StatefulWidget {
   final String? username;
   final String? source;
   final String? metadata;
+  final bool? isBottomSheet;
   final Function(bool val) onSubmit;
   final Function() onCancel;
   final Function() onError;
@@ -30,6 +31,7 @@ class JabarFormBuilder extends StatefulWidget {
     this.username,
     this.source = 'mobile',
     this.metadata,
+    this.isBottomSheet = false,
     required this.onSubmit,
     required this.onCancel,
     required this.onError,
@@ -45,7 +47,10 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
       JFBuilderController(questions: []);
 
   final _formKey = GlobalKey<FormBuilderState>();
-  bool isBusy = false;
+  final ScrollController scrollController = ScrollController();
+
+  bool _isBusy = false;
+  bool _hasFocus = false;
 
   @override
   void initState() {
@@ -93,32 +98,68 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
     return FormBuilder(
       key: _formKey,
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: ListView.builder(
-                shrinkWrap: true,
-                itemCount: questions.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return _jfBuilderController.isHiddenField(
-                              tag: questions[index].tag,
-                              label: questions[index].label) ||
-                          !questions[index].isActive
-                      ? const SizedBox.shrink()
-                      : Padding(
-                          padding: const EdgeInsets.symmetric(
-                              vertical: 8, horizontal: 20),
-                          child: fieldBuilder(
-                            uuidForm: questions[index].uuidSurvey,
-                            uuidQuestion: questions[index].uuid,
-                            type: questions[index].type,
-                            label: questions[index].label,
-                            options: questions[index].options,
-                            rules: questions[index].rules,
-                          ),
-                        );
-                }),
+            child: NotificationListener(
+              onNotification: (t) {
+                if (t is UserScrollNotification) {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  if (_hasFocus) {
+                    setState(() {
+                      _hasFocus = false;
+                    });
+                  }
+                }
+                return true;
+              },
+              child: GestureDetector(
+                onTap: () {
+                  FocusScope.of(context).requestFocus(FocusNode());
+                  scrollController.animateTo(0.0,
+                      duration: const Duration(milliseconds: 100),
+                      curve: Curves.easeOutCubic);
+                  setState(() {
+                    _hasFocus = false;
+                  });
+                },
+                child: ListView.builder(
+                    controller: scrollController,
+                    shrinkWrap: true,
+                    itemCount: questions.length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return _jfBuilderController.isHiddenField(
+                                  tag: questions[index].tag,
+                                  label: questions[index].label) ||
+                              !questions[index].isActive
+                          ? const SizedBox.shrink()
+                          : Column(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      vertical: 8, horizontal: 20),
+                                  child: fieldBuilder(
+                                      uuidForm: questions[index].uuidSurvey,
+                                      uuidQuestion: questions[index].uuid,
+                                      type: questions[index].type,
+                                      label: questions[index].label,
+                                      options: questions[index].options,
+                                      rules: questions[index].rules,
+                                      index: index,
+                                      scrollController: scrollController),
+                                ),
+                                (index + 1) == questions.length &&
+                                        _hasFocus &&
+                                        widget.isBottomSheet == true
+                                    ? const SizedBox(height: 290)
+                                    : const SizedBox.shrink()
+                              ],
+                            );
+                    }),
+              ),
+            ),
           ),
-          !isBusy ? actionButton() : submitLoading(),
+          !_isBusy ? actionButton() : submitLoading(),
         ],
       ),
     );
@@ -131,6 +172,8 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
     required String label,
     List<dynamic>? options,
     Map<String, dynamic>? rules,
+    required int index,
+    required ScrollController scrollController,
   }) {
     switch (type) {
       case 'title':
@@ -147,7 +190,11 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
           callback: (val) {},
         );
       case 'textarea':
-        return JabarFromTextArea(label: label);
+        return JabarFromTextArea(
+          label: label,
+          index: index,
+          scrollController: scrollController,
+        );
       case 'scale_rating':
         return JabarFromScaleRating(
           label: label,
@@ -171,6 +218,15 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
           options: options ?? [],
           rules: rules ?? {},
           hintText: 'Sampaikan hal yang perlu kami perbaiki',
+          index: index,
+          scrollController: scrollController,
+          isFocus: (val) {
+            if (val) {
+              setState(() {
+                _hasFocus = true;
+              });
+            }
+          },
           callback: (selectedValue, textareaValue) {
             Answer data = Answer(
               uuidSurvey: uuidForm,
@@ -247,7 +303,7 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
 
                 if (mounted) {
                   setState(() {
-                    isBusy = true;
+                    _isBusy = true;
                   });
                 }
 
@@ -269,7 +325,7 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
                   Future.delayed(const Duration(seconds: 3), () {
                     if (mounted) {
                       setState(() {
-                        isBusy = false;
+                        _isBusy = false;
                       });
                     }
                   });

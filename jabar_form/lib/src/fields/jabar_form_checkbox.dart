@@ -11,7 +11,10 @@ class JabarFromCheckbox extends StatefulWidget {
   final String hintText;
   final List<dynamic> options;
   final Map<String, dynamic> rules;
+  final int index;
+  final ScrollController scrollController;
   final ComboBoxMapCallback callback;
+  final Function(bool) isFocus;
 
   const JabarFromCheckbox({
     super.key,
@@ -19,7 +22,10 @@ class JabarFromCheckbox extends StatefulWidget {
     this.hintText = '',
     required this.options,
     required this.rules,
+    required this.index,
+    required this.scrollController,
     required this.callback,
+    required this.isFocus,
   });
 
   @override
@@ -116,6 +122,15 @@ class _JabarFromCheckboxState extends State<JabarFromCheckbox> {
             child: FormBuilderTextField(
               name: 'Lainnya',
               maxLines: 3,
+              onTap: () {
+                double heightOfTextfield = 80;
+                widget.scrollController.animateTo(
+                    widget.index * heightOfTextfield,
+                    duration: const Duration(milliseconds: 100),
+                    curve: Curves.easeOutCubic);
+
+                widget.isFocus.call(true);
+              },
               validator: (value) {
                 return JFValidation.validate(widget.rules, value);
               },
