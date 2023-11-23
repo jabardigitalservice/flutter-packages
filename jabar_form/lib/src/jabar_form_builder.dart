@@ -83,7 +83,6 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
 
             return formBuilder(context, surveyData.data!.questions!);
           } else if (state is JFStateError) {
-            // Handle the error state.
             return errorBuilder();
           } else {
             // Handle other states if needed.
@@ -370,6 +369,7 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
             width: 80,
             height: 80,
           ),
+          const SizedBox(height: 40),
           const Text('Koneksi server error, silahkan coba beberapa saat lagi'),
         ],
       ),

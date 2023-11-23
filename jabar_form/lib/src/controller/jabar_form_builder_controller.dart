@@ -93,7 +93,11 @@ class JFBuilderController {
       return element.label.toString().toLowerCase() == label.toLowerCase();
     });
 
-    if (existingIndex != -1) {
+    int existingAnswerIndex = answers.indexWhere((element) {
+      return element.value.toString().toLowerCase() == value.toLowerCase();
+    });
+
+    if (existingAnswerIndex == -1 && existingIndex != -1) {
       answers.add(Answer(
         uuidSurvey: questions[existingIndex].uuidSurvey,
         uuidQuestion: questions[existingIndex].uuid,
