@@ -10,7 +10,6 @@ import 'package:jabar_form/src/network/api_service.dart';
 import 'package:jabar_form/src/network/models/request/answer.dart';
 import 'package:jabar_form/src/network/models/request/submit_request.dart';
 import 'package:jabar_form/src/network/models/response/detail_form/questions.dart';
-
 import 'package:jabar_form/src/style.dart';
 
 class JabarFormBuilder extends StatefulWidget {
@@ -52,9 +51,12 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
   bool _isBusy = false;
   bool _hasFocus = false;
 
+  DateTime? _initialTime;
+
   @override
   void initState() {
     super.initState();
+    _initialTime = DateTime.now();
   }
 
   @override
@@ -306,13 +308,14 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
                   });
                 }
 
-                DateTime now = DateTime.now();
-                int epochTime = now.millisecondsSinceEpoch;
+                int elapsedTime = DateTime.now()
+                    .difference(_initialTime ?? DateTime.now())
+                    .inMilliseconds;
 
                 ApiService(baseUrl: widget.baseUrl)
                     .submit(SubmitRequest(
                   answers: _jfBuilderController.answers,
-                  submittedTime: epochTime,
+                  submittedTime: elapsedTime,
                 ))
                     .then((value) {
                   if (value == null) widget.onError();
