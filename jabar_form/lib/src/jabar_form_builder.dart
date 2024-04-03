@@ -17,7 +17,7 @@ class JabarFormBuilder extends StatefulWidget {
   final String slug;
   final String? username;
   final String? source;
-  final String? metadata;
+  final String metadata;
   final bool? isBottomSheet;
   final Function(bool val) onSubmit;
   final Function() onCancel;
@@ -29,7 +29,7 @@ class JabarFormBuilder extends StatefulWidget {
     required this.slug,
     this.username,
     this.source = 'mobile',
-    this.metadata,
+    required this.metadata,
     this.isBottomSheet = false,
     required this.onSubmit,
     required this.onCancel,
