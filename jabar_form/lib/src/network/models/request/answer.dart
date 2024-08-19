@@ -1,9 +1,11 @@
 import 'dart:convert';
 
-class Answer {
-  String? uuidSurvey;
-  String? uuidQuestion;
-  String? type;
+import 'package:equatable/equatable.dart';
+
+class Answer extends Equatable {
+  final String? uuidSurvey;
+  final String? uuidQuestion;
+  final String? type;
   dynamic value;
 
   Answer({this.uuidSurvey, this.uuidQuestion, this.type, this.value});
@@ -38,4 +40,7 @@ class Answer {
   ///
   /// Converts [Answer] to a JSON string.
   String toJson() => json.encode(toMap());
+
+  @override
+  List<Object?> get props => [uuidSurvey, uuidQuestion, type, value];
 }

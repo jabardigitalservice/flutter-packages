@@ -1,16 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 
+typedef TextAreaCallback = void Function(dynamic val);
+
 class JabarFromTextArea extends StatelessWidget {
   final String label;
   final int index;
   final ScrollController scrollController;
+  final TextAreaCallback callback;
 
   const JabarFromTextArea({
     super.key,
     required this.label,
     required this.index,
     required this.scrollController,
+    required this.callback,
   });
 
   @override
@@ -30,18 +34,21 @@ class JabarFromTextArea extends StatelessWidget {
                 ),
                 textAlign: TextAlign.left,
               ),
-              const SizedBox(height: 10)
             ],
           ),
         ),
+        const SizedBox(height: 6),
         FormBuilderTextField(
           name: label,
           maxLines: 3,
+          onChanged: (val) {
+            callback(val);
+          },
           onTap: () {
-            double heightOfTextfield = 80;
-            scrollController.animateTo(index * heightOfTextfield,
-                duration: const Duration(milliseconds: 100),
-                curve: Curves.easeOutCubic);
+            // double heightOfTextfield = 80;
+            // scrollController.animateTo(index * heightOfTextfield,
+            //     duration: const Duration(milliseconds: 100),
+            //     curve: Curves.easeOutCubic);
           },
           decoration: InputDecoration(
             hintText: label,

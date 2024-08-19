@@ -73,6 +73,8 @@ class _MyHomePageState extends State<MyHomePage> {
           onSubmit: (val) {},
           onCancel: () {},
           onError: () {},
+          userProperties: {},
+          metadata: '',
         ),
       ),
     );

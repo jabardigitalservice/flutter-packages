@@ -53,14 +53,25 @@ class JFBuilderController {
 
     if (existingIndex != -1) {
       // Replace the existing object with the new one
-      answers[existingIndex] = newAnswer;
+      answers[existingIndex].value = newAnswer.value;
     } else {
       // Push the new object into the array
       answers.add(newAnswer);
     }
   }
 
-  void initMetadata({String? username, String? source, String? metadata}) {
+  void initMetadata({
+    String? username,
+    String? source,
+    String? metadata,
+    Map<String, dynamic>? userProperties,
+  }) {
+    if (userProperties != null) {
+      userProperties.forEach((key, value) {
+        _addMetadataByTag(key, value);
+      });
+    }
+
     if (username != null) _addMetadataByLabel('username', username);
     if (source != null) _addMetadataByLabel('source', source);
     if (metadata != null) _addMetadataByLabel('metadata', metadata);
@@ -91,6 +102,25 @@ class JFBuilderController {
   void _addMetadataByLabel(String label, dynamic value) {
     int existingIndex = questions.indexWhere((element) {
       return element.label.toString().toLowerCase() == label.toLowerCase();
+    });
+
+    int existingAnswerIndex = answers.indexWhere((element) {
+      return element.value.toString().toLowerCase() == value.toLowerCase();
+    });
+
+    if (existingAnswerIndex == -1 && existingIndex != -1) {
+      answers.add(Answer(
+        uuidSurvey: questions[existingIndex].uuidSurvey,
+        uuidQuestion: questions[existingIndex].uuid,
+        type: questions[existingIndex].type,
+        value: value,
+      ));
+    }
+  }
+
+  void _addMetadataByTag(String tag, dynamic value) {
+    int existingIndex = questions.indexWhere((element) {
+      return element.tag.toString().toLowerCase() == tag.toLowerCase();
     });
 
     int existingAnswerIndex = answers.indexWhere((element) {

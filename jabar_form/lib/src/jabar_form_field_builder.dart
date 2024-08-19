@@ -49,6 +49,19 @@ class JabarFormFieldBuilder extends StatelessWidget {
           label: showTitle ? label : '',
           index: index,
           scrollController: scrollController,
+          callback: (val) {
+            // Answer data = Answer(
+            //   uuidSurvey: uuidForm,
+            //   uuidQuestion: uuidQuestion,
+            //   type: type,
+            //   value: val,
+            // );
+            // _jfBuilderController.updateOrPushAnswer(data);
+
+            // setState(() {
+            //   _jfBuilderController.validate();
+            // });
+          },
         );
       case 'scale_rating':
         return JabarFromScaleRating(

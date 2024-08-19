@@ -15,9 +15,10 @@ import 'package:jabar_form/src/style.dart';
 class JabarFormBuilder extends StatefulWidget {
   final String baseUrl;
   final String slug;
-  final String? username;
   final String? source;
+  final String? username;
   final String metadata;
+  final Map<String, dynamic>? userProperties;
   final bool? isBottomSheet;
   final Function(bool val) onSubmit;
   final Function() onCancel;
@@ -27,9 +28,10 @@ class JabarFormBuilder extends StatefulWidget {
     super.key,
     this.baseUrl = ApiEndpoint.baseUrl,
     required this.slug,
-    this.username,
     this.source = 'mobile',
     required this.metadata,
+    this.username,
+    required this.userProperties,
     this.isBottomSheet = false,
     required this.onSubmit,
     required this.onCancel,
@@ -50,6 +52,7 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
 
   bool _isBusy = false;
   bool _hasFocus = false;
+  bool _isFirstLoad = true;
 
   DateTime? _initialTime;
 
@@ -74,14 +77,9 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
           } else if (state is JFStateSuccess) {
             // Handle your successful state, for example, display survey data.
             final surveyData = state.jfData;
-
             _jfBuilderController.questions = surveyData.data!.questions!;
 
-            _jfBuilderController.initMetadata(
-              username: widget.username,
-              source: widget.source,
-              metadata: widget.metadata,
-            );
+            _setInitAnswer();
 
             return formBuilder(context, surveyData.data!.questions!);
           } else if (state is JFStateError) {
@@ -130,9 +128,11 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
                     itemCount: questions.length,
                     itemBuilder: (BuildContext context, int index) {
                       return _jfBuilderController.isHiddenField(
-                                  tag: questions[index].tag,
-                                  label: questions[index].label) ||
-                              !questions[index].isActive
+                                tag: questions[index].tag,
+                                label: questions[index].label,
+                              ) ||
+                              !questions[index].isActive ||
+                              (questions[index].isHidden ?? false)
                           ? const SizedBox.shrink()
                           : Column(
                               children: [
@@ -195,6 +195,15 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
           label: label,
           index: index,
           scrollController: scrollController,
+          callback: (val) {
+            Answer data = Answer(
+              uuidSurvey: uuidForm,
+              uuidQuestion: uuidQuestion,
+              type: type,
+              value: val,
+            );
+            _jfBuilderController.updateOrPushAnswer(data);
+          },
         );
       case 'scale_rating':
         return JabarFromScaleRating(
@@ -204,7 +213,7 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
               uuidSurvey: uuidForm,
               uuidQuestion: uuidQuestion,
               type: type,
-              value: val,
+              value: val.toString(),
             );
             _jfBuilderController.updateOrPushAnswer(data);
 
@@ -302,6 +311,14 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
               onPressed: () async {
                 if (_jfBuilderController.isHasErrorValidation()) return;
 
+                Future.delayed(const Duration(seconds: 3), () {
+                  if (mounted) {
+                    setState(() {
+                      _isBusy = false;
+                    });
+                  }
+                });
+
                 if (mounted) {
                   setState(() {
                     _isBusy = true;
@@ -322,14 +339,12 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
 
                   if (value!.statusCode == 201) widget.onSubmit(true);
 
-                  if (value.statusCode == 422) widget.onSubmit(false);
+                  if (value.statusCode == 422 || value.statusCode == 400) {
+                    widget.onSubmit(false);
+                  }
 
-                  Future.delayed(const Duration(seconds: 3), () {
-                    if (mounted) {
-                      setState(() {
-                        _isBusy = false;
-                      });
-                    }
+                  setState(() {
+                    _isBusy = false;
                   });
                 });
               },
@@ -377,5 +392,29 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
         ],
       ),
     );
+  }
+
+  void _setInitAnswer() {
+    if (_isFirstLoad) {
+      for (var element in _jfBuilderController.questions) {
+        if (!element.isHidden!) {
+          _jfBuilderController.updateOrPushAnswer(Answer(
+            uuidSurvey: element.uuidSurvey,
+            uuidQuestion: element.uuid,
+            type: element.type,
+            value: null,
+          ));
+        }
+      }
+
+      _jfBuilderController.initMetadata(
+        source: widget.source,
+        metadata: widget.metadata,
+        username: widget.username,
+        userProperties: widget.userProperties,
+      );
+    }
+
+    _isFirstLoad = false;
   }
 }

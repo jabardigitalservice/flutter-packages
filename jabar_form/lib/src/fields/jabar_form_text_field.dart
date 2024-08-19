@@ -27,10 +27,10 @@ class JabarFromTextField extends StatelessWidget {
                 ),
                 textAlign: TextAlign.left,
               ),
-              const SizedBox(height: 10)
             ],
           ),
         ),
+        const SizedBox(height: 6),
         FormBuilderTextField(
           name: label,
           decoration: InputDecoration(

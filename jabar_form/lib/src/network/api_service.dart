@@ -16,7 +16,7 @@ class ApiService {
         url: '${baseUrl}surveys/slug/$slug',
       ).call();
       return DetailFormResponse.fromMap(response);
-    } on DioException {
+    } on DioException catch (_) {
       rethrow;
     } catch (e) {
       return null;
@@ -32,7 +32,7 @@ class ApiService {
       ).call();
 
       return SubmitFormResponse.fromMap(response.data);
-    } on DioException {
+    } on DioException catch (_) {
       rethrow;
     } catch (e) {
       return null;

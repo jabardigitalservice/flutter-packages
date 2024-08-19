@@ -1,4 +1,6 @@
-class Question {
+import 'package:equatable/equatable.dart';
+
+class Question extends Equatable {
   String uuid;
   String uuidSurvey;
   String name;
@@ -8,6 +10,7 @@ class Question {
   Map<String, dynamic>? rules;
   String? tag;
   bool isActive;
+  bool? isHidden;
   // Add other fields from the JSON data
 
   Question({
@@ -20,6 +23,7 @@ class Question {
     this.rules,
     this.tag,
     required this.isActive,
+    this.isHidden = false,
     // Add other fields in the constructor
   });
 
@@ -34,7 +38,23 @@ class Question {
       rules: json['rules'],
       tag: json['tag'],
       isActive: json['is_active'],
+      isHidden: json['is_hidden'] ?? false,
       // Add other fields from the JSON data
     );
   }
+
+  @override
+  List<Object?> get props => [
+        uuid,
+        uuidSurvey,
+        name,
+        type,
+        label,
+        options,
+        rules,
+        tag,
+        isActive,
+        isHidden,
+        // Add other fields
+      ];
 }

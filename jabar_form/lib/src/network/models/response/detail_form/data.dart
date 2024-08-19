@@ -1,16 +1,19 @@
 import 'dart:convert';
 
+import 'package:equatable/equatable.dart';
+
 import 'questions.dart';
 import 'collaborator.dart';
 import 'settings.dart';
 
-class Data {
+class Data extends Equatable {
   String? title;
   String? description;
   String? slug;
   dynamic banner;
   dynamic estimatedFillTime;
   bool? isActive;
+  bool? isHidden;
   String? updatedAt;
   dynamic deletedAt;
   int? views;
@@ -31,6 +34,7 @@ class Data {
     this.banner,
     this.estimatedFillTime,
     this.isActive,
+    this.isHidden,
     this.updatedAt,
     this.deletedAt,
     this.views,
@@ -57,6 +61,7 @@ class Data {
         banner: data['banner'] as dynamic,
         estimatedFillTime: data['estimated_fill_time'] as dynamic,
         isActive: data['is_active'] as bool?,
+        isHidden: data['is_hidden'] as bool?,
         updatedAt: data['updated_at'] as String?,
         deletedAt: data['deleted_at'] as dynamic,
         views: data['views'] as int?,
@@ -84,6 +89,7 @@ class Data {
         'banner': banner,
         'estimated_fill_time': estimatedFillTime,
         'is_active': isActive,
+        'is_hidden': isHidden,
         'updated_at': updatedAt,
         'deleted_at': deletedAt,
         'views': views,
@@ -109,4 +115,28 @@ class Data {
   ///
   /// Converts [Data] to a JSON string.
   String toJson() => json.encode(toMap());
+
+  @override
+  // TODO: implement props
+  List<Object?> get props => [
+        title,
+        description,
+        slug,
+        banner,
+        estimatedFillTime,
+        isActive,
+        isHidden,
+        updatedAt,
+        deletedAt,
+        views,
+        googleSpreadsheetId,
+        uuidUser,
+        submittedMessage,
+        settings,
+        collaborators,
+        respondentCounts,
+        deletedPermanent,
+        uuid,
+        questions,
+      ];
 }
