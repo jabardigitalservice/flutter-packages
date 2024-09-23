@@ -128,7 +128,7 @@ class JFBuilderController {
     });
 
     if (existingAnswerIndex == -1 && existingIndex != -1) {
-      answers.add(Answer(
+      updateOrPushAnswer(Answer(
         uuidSurvey: questions[existingIndex].uuidSurvey,
         uuidQuestion: questions[existingIndex].uuid,
         type: questions[existingIndex].type,

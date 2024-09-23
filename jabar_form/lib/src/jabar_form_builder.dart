@@ -397,14 +397,12 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
   void _setInitAnswer() {
     if (_isFirstLoad) {
       for (var element in _jfBuilderController.questions) {
-        if (!element.isHidden!) {
-          _jfBuilderController.updateOrPushAnswer(Answer(
-            uuidSurvey: element.uuidSurvey,
-            uuidQuestion: element.uuid,
-            type: element.type,
-            value: null,
-          ));
-        }
+        _jfBuilderController.updateOrPushAnswer(Answer(
+          uuidSurvey: element.uuidSurvey,
+          uuidQuestion: element.uuid,
+          type: element.type,
+          value: null,
+        ));
       }
 
       _jfBuilderController.initMetadata(
