@@ -311,7 +311,7 @@ class _JabarFormBuilderState extends State<JabarFormBuilder>
               onPressed: () async {
                 if (_jfBuilderController.isHasErrorValidation()) return;
 
-                Future.delayed(const Duration(seconds: 3), () {
+                Future.delayed(const Duration(seconds: 20), () {
                   if (mounted) {
                     setState(() {
                       _isBusy = false;
