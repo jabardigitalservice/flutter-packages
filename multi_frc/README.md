@@ -17,6 +17,8 @@ know whether this package might be useful for them.
 ## Features
 
 TODO: List what your package can do. Maybe include images, gifs, or videos.
+android & ios: add app to firebase project
+ios: increate app deployment target to 13.0
 
 ## Getting started
 

@@ -4,22 +4,34 @@ import 'package:multi_frc/multi_frc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  await MultiFrc.init(options: [
-    MultiFrc.options(
-      apiKey: 'AIzaSyDWLZndekQOF-lo0OH6EMaoi7tCzG8uMpc',
-      appId: '1:565352898022:android:c3d715f867b1b70a950a27',
-      messagingSenderId: '565352898022',
-      projectId: 'jabar-superapp-research',
-      storageBucket: 'jabar-superapp-research.firebasestorage.app',
-    ),
-    // MultiFrc.options(
-    //   apiKey: 'AIzaSyDlnQcQmtBQ_OUAodGG79ChLdTCQkTXTH0',
-    //   appId: '1:35697311623:android:99268267626d48312f9d22',
-    //   messagingSenderId: '35697311623',
-    //   projectId: 'jabar-superapp',
-    //   storageBucket: 'jabar-superapp.appspot.com',
-    // )
-  ]);
+  await MultiFrc.init(
+    [
+      MultiFrcOption(
+        android: MultiFrc.option(
+          apiKey: 'AIzaSyDWLZndekQOF-lo0OH6EMaoi7tCzG8uMpc',
+          appId: '1:565352898022:android:8d5b13bd4566667f950a27',
+          messagingSenderId: '565352898022',
+          projectId: 'jabar-superapp-research',
+          storageBucket: 'jabar-superapp-research.firebasestorage.app',
+        ),
+        ios: MultiFrc.option(
+          apiKey: 'AIzaSyDgY27C3kFJ91LT4NbwflEujuKGIs6J_Ug',
+          appId: '1:565352898022:ios:a73c1d3d61449f58950a27',
+          messagingSenderId: '565352898022',
+          projectId: 'jabar-superapp-research',
+          storageBucket: 'jabar-superapp-research.firebasestorage.app',
+          iosBundleId: 'com.example.example',
+        ),
+      ),
+      // MultiFrc.options(
+      //   apiKey: 'AIzaSyDlnQcQmtBQ_OUAodGG79ChLdTCQkTXTH0',
+      //   appId: '1:35697311623:android:99268267626d48312f9d22',
+      //   messagingSenderId: '35697311623',
+      //   projectId: 'jabar-superapp',
+      //   storageBucket: 'jabar-superapp.appspot.com',
+      // )
+    ],
+  );
 
   runApp(const MyApp());
 }
