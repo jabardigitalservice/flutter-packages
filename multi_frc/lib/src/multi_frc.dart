@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -8,6 +7,7 @@ import 'package:firebase_remote_config/firebase_remote_config.dart';
 import 'package:flutter/foundation.dart';
 
 import 'frc_value_type_enum.dart';
+import 'multi_frc_option.dart';
 
 class MultiFrc {
   MultiFrc._();
@@ -24,7 +24,6 @@ class MultiFrc {
     for (var option in (options ?? <MultiFrcOption>[])) {
       // get project ids active
       final projectIds = Firebase.apps.map((e) => e.options.projectId);
-      print(projectIds);
 
       // set firebase app based on OS
       FirebaseOptions? osOption;
@@ -32,28 +31,20 @@ class MultiFrc {
       if (Platform.isIOS) osOption = option.ios;
       if (kIsWeb) osOption = option.web;
 
-      print(osOption);
-
       // continue if appOS not valid
       if (osOption == null || projectIds.contains(osOption.projectId)) continue;
-
-      log('AAAA {${Firebase.apps.map((e) => e.options.projectId)}');
 
       // init firebase
       await Firebase.initializeApp(name: osOption.projectId, options: osOption);
       if (kIsWeb) continue;
 
-      log('BBBB ${Firebase.apps.map((e) => e.options.projectId)}');
-
       // init frc listener
       final instance = FirebaseRemoteConfig.instanceFor(
         app: Firebase.app(osOption.projectId),
       );
-      print('III ${instance.lastFetchStatus}');
       await instance.fetchAndActivate();
-      print('JJJJ ${instance.lastFetchStatus}');
+
       instance.onConfigUpdated.listen((event) async {
-        print('OOOO');
         await instance.activate();
         for (var key in event.updatedKeys) {
           final streamIndex = streams.indexWhere((e) => e.key == key);
@@ -113,10 +104,8 @@ class MultiFrc {
   /// Fetch json from any firebase apps
   static Map<String, dynamic> getJson(String key, {String? appName}) {
     for (var app in apps(appName)) {
-      print('CCCC $app');
       final instance = FirebaseRemoteConfig.instanceFor(app: app);
       final value = instance.getValue(key).asString();
-      print('DDDD ${instance.app}');
       if (value.isNotEmpty) return jsonDecode(value);
     }
 
@@ -255,11 +244,4 @@ class MultiFrc {
         ? Stream.empty()
         : streams.last.controller.stream as Stream<T>;
   }
-}
-
-class MultiFrcOption {
-  MultiFrcOption({this.android, this.ios, this.web});
-  final FirebaseOptions? android;
-  final FirebaseOptions? ios;
-  final FirebaseOptions? web;
 }

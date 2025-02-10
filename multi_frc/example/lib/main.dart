@@ -4,32 +4,34 @@ import 'package:multi_frc/multi_frc.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
+  final apiKey = '';
+  final appIdAndroid = '';
+  final appIdIos = '';
+  final messagingSenderId = '';
+  final projectId = '';
+  final storageBucket = '';
+  final iosBundleId = '';
+
   await MultiFrc.init(
     [
       MultiFrcOption(
         android: MultiFrc.option(
-          apiKey: 'AIzaSyDWLZndekQOF-lo0OH6EMaoi7tCzG8uMpc',
-          appId: '1:565352898022:android:8d5b13bd4566667f950a27',
-          messagingSenderId: '565352898022',
-          projectId: 'jabar-superapp-research',
-          storageBucket: 'jabar-superapp-research.firebasestorage.app',
+          apiKey: apiKey,
+          appId: appIdAndroid,
+          messagingSenderId: messagingSenderId,
+          projectId: projectId,
+          storageBucket: storageBucket,
         ),
         ios: MultiFrc.option(
-          apiKey: 'AIzaSyDgY27C3kFJ91LT4NbwflEujuKGIs6J_Ug',
-          appId: '1:565352898022:ios:a73c1d3d61449f58950a27',
-          messagingSenderId: '565352898022',
-          projectId: 'jabar-superapp-research',
-          storageBucket: 'jabar-superapp-research.firebasestorage.app',
-          iosBundleId: 'com.example.example',
+          apiKey: apiKey,
+          appId: appIdIos,
+          messagingSenderId: messagingSenderId,
+          projectId: projectId,
+          storageBucket: storageBucket,
+          iosBundleId: iosBundleId,
         ),
+        web: null,
       ),
-      // MultiFrc.options(
-      //   apiKey: 'AIzaSyDlnQcQmtBQ_OUAodGG79ChLdTCQkTXTH0',
-      //   appId: '1:35697311623:android:99268267626d48312f9d22',
-      //   messagingSenderId: '35697311623',
-      //   projectId: 'jabar-superapp',
-      //   storageBucket: 'jabar-superapp.appspot.com',
-      // )
     ],
   );
 
@@ -64,7 +66,7 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   void initState() {
     super.initState();
-    showBtnStream.listen((e) => print('AAAA $e'));
+    showBtnStream.listen((e) => debugPrint('$e'));
   }
 
   @override

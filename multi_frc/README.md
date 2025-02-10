@@ -1,47 +1,78 @@
-<!--
-This README describes the package. If you publish this package to pub.dev,
-this README's contents appear on the landing page for your package.
+## multi_frc
 
-For information about how to write a good package README, see the guide for
-[writing package pages](https://dart.dev/tools/pub/writing-package-pages).
-
-For general information about developing packages, see the Dart guide for
-[creating packages](https://dart.dev/guides/libraries/create-packages)
-and the Flutter guide for
-[developing packages and plugins](https://flutter.dev/to/develop-packages).
--->
-
-TODO: Put a short description of the package here that helps potential users
-know whether this package might be useful for them.
-
-## Features
-
-TODO: List what your package can do. Maybe include images, gifs, or videos.
-android & ios: add app to firebase project
-ios: increate app deployment target to 13.0
+Use remote config from multiple firebase projects with ease.
 
 ## Getting started
 
-TODO: List prerequisites and provide or point to information on how to
-start using the package.
+Add your app to firebase project, check this [link](https://pub.dev/packages/firebase_core) for guide.
+On Android, it should work out of the box.
+
+>iOS: increase your app deployment target to 13.0
 
 ## Usage
 
-TODO: Include short and useful examples for package users. Add longer examples
-to `/example` folder.
+1. You can use `MultiFrc.init()` to initialized multiple firebase projects at once:
+
+>Note: If you already initialized your projects using flutterfire or other methods, then you don't need to add those projects to this init function.
 
 ```dart
-const like = 'sample';
+await MultiFrc.init(
+    [
+      // Firebase Project #1
+      MultiFrcOption(
+        android: MultiFrc.option(
+          apiKey: apiKey,
+          appId: appId,
+          messagingSenderId: messagingSenderId,
+          projectId: projectId,
+          storageBucket: storageBucket,
+        ),
+        ios: MultiFrc.option(
+           apiKey: apiKey,
+          appId: appId,
+          messagingSenderId: messagingSenderId,
+          projectId: projectId,
+          storageBucket: storageBucket,
+          iosBundleId: iosBundleId,
+        ),
+        web: null, // not tested, use at your own risk
+      ),
+      // Firebase Project #2
+      MultiFrcOption(...)
+    ],
+  );
+```
+
+2. You can get the value as-is or as stream. example:
+
+```dart
+String get greeting => MultiFrc.getString('greeting');
+Stream<String> greetingStream = MultiFrc.getStringAsStream('greeting');
+
+num get count => MultiFrc.getNumber('count');
+Stream<num> countStream = MultiFrc.getNumberAsStream('count');
+
+bool get isShow => MultiFrc.getBool('is_show');
+Stream<bool> isShowStream = MultiFrc.getBoolAsStream('is_show');
+
+Map<String, dynamic> get myObj => MultiFrc.getJson('my_obj');
+Stream<Map<String, dynamic>> myObjStream = MultiFrc.getJsonAsStream('my_obj');
+```
+
+3. You can remove stream using `removeStream(key)`, example:
+
+```dart
+final key = 'my_key';
+final myObjStream = MultiFrc.getJsonAsStream(key);
+
+MultiFrc.removeStream(key);
 ```
 
 ## Additional information
 
-TODO: Tell users more about the package: where to find more information, how to
-contribute to the package, how to file issues, what response they can expect
-from the package authors, and more.
+Contributions of any kind are welcome. Feel free to improve the library by creating a pull request or opening an issue.
 
 ## Version
-
 ```dart
 Flutter 3.27.4';
 ```
