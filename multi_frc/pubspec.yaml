@@ -1,7 +1,7 @@
 name: multi_frc
 description: "Multiple Firebase Remote Config Helper"
 version: 0.0.1
-homepage:
+homepage: https://github.com/jabardigitalservice/flutter-packages/tree/main/multi_frc
 
 environment:
   sdk: ^3.6.2
