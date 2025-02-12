@@ -46,7 +46,7 @@ class NetworkFileCached {
 
     var cacheDir = await getTemporaryDirectory();
 
-    Hive.initFlutter(cacheDir.path);
+    await Hive.initFlutter(cacheDir.path);
     Hive.registerAdapter(CacheRecordAdapter());
     _box = await Hive.openBox('NetworkFileCached');
     _instance = NetworkFileCached._internal(expired);
