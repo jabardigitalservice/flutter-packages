@@ -57,6 +57,9 @@ Stream<bool> isShowStream = MultiFrc.getBoolAsStream('is_show');
 
 Map<String, dynamic> get myObj => MultiFrc.getJson('my_obj');
 Stream<Map<String, dynamic>> myObjStream = MultiFrc.getJsonAsStream('my_obj');
+
+List get myArr => MultiFrc.getArray('my_rr');
+Stream<List> myArrStream = MultiFrc.getArrayAsStream('my_rr');
 ```
 
 3. You can remove stream using `removeStream(key)`, example:
@@ -73,6 +76,7 @@ MultiFrc.removeStream(key);
 Contributions of any kind are welcome. Feel free to improve the library by creating a pull request or opening an issue.
 
 ## Version
+
 ```dart
-Flutter 3.27.4';
+Flutter 3.29.2';
 ```
