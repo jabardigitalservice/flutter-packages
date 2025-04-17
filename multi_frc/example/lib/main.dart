@@ -60,8 +60,9 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  String get keyword => MultiFrc.getJson('param_test')['hello'] ?? '';
-  Stream showBtnStream = MultiFrc.getBoolAsStream('show_btn');
+  String get keyword => MultiFrc.getJson('json_test')['hello'] ?? '';
+  List get counting => MultiFrc.getArray('array_test');
+  Stream showBtnStream = MultiFrc.getBoolAsStream('bool_test');
 
   @override
   void initState() {
@@ -89,6 +90,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Text(
+              'Lets count: ${counting.join(', ')}!',
+            ),
             const Text(
               'You have pushed the button this many times:',
             ),

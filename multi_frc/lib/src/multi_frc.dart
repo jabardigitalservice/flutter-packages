@@ -112,6 +112,17 @@ class MultiFrc {
     return {};
   }
 
+  /// Fetch array from any firebase apps
+  static List getArray(String key, {String? appName}) {
+    for (var app in apps(appName)) {
+      final instance = FirebaseRemoteConfig.instanceFor(app: app);
+      final value = instance.getValue(key).asString();
+      if (value.isNotEmpty) return jsonDecode(value);
+    }
+
+    return [];
+  }
+
   /// Stream string values from any firebase projects
   static Stream<String> getStringAsStream(String key, {String? appName}) {
     return _getFrcValueAsStream<String>(
@@ -148,6 +159,18 @@ class MultiFrc {
     String? appName,
   }) {
     return _getFrcValueAsStream<Map<String, dynamic>>(
+      key,
+      FrcValueType.json,
+      appName: appName,
+    );
+  }
+
+  /// Stream array values from any firebase projects
+  static Stream<List> getArrayAsStream(
+    String key, {
+    String? appName,
+  }) {
+    return _getFrcValueAsStream<List>(
       key,
       FrcValueType.json,
       appName: appName,
