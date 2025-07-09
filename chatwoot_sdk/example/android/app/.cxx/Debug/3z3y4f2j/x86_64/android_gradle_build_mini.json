@@ -1,0 +1,20 @@
+{
+  "buildFiles": [
+    "/Users/jaluowen/development/flutter/packages/flutter_tools/gradle/src/main/groovy/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/jaluowen/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/jaluowen/Documents/GitHub/chatwoot-flutter-sdk/example/android/app/.cxx/Debug/3z3y4f2j/x86_64",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/jaluowen/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/jaluowen/Documents/GitHub/chatwoot-flutter-sdk/example/android/app/.cxx/Debug/3z3y4f2j/x86_64",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {}
+}
