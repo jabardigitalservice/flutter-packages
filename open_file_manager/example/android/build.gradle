@@ -1,0 +1,21 @@
+// Menentukan group dan version untuk seluruh proyek
+group = 'com.aubergine.open_file_manager'
+version = '1.0-SNAPSHOT'
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+rootProject.buildDir = '../build'
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(':app')
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}

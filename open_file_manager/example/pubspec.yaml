@@ -1,0 +1,21 @@
+name: open_file_manager_example
+description: Demonstrates how to use the open_file_manager plugin.
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.1.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  open_file_manager:
+    path: ../
+
+dev_dependencies:
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
