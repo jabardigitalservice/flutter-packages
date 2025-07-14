@@ -47,6 +47,20 @@ class FileCache extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
+                    builder: (context) => FileCacheSample(
+                      url: url,
+                      additionalKeyName: 'NEW',
+                    ),
+                  ),
+                );
+              },
+              child: const Text('Sample PDF View With Additional Key'),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
                     builder: (context) => FileCacheLoadingIndicator(url: url),
                   ),
                 );
@@ -61,9 +75,14 @@ class FileCache extends StatelessWidget {
 }
 
 class FileCacheSample extends StatefulWidget {
-  const FileCacheSample({super.key, required this.url});
+  const FileCacheSample({
+    super.key,
+    required this.url,
+    this.additionalKeyName,
+  });
 
   final String url;
+  final String? additionalKeyName;
 
   @override
   State<FileCacheSample> createState() => _FileCacheSampleState();
@@ -75,7 +94,7 @@ class _FileCacheSampleState extends State<FileCacheSample> {
   @override
   void initState() {
     super.initState();
-    file = getFile();
+    file = getFile(widget.additionalKeyName);
   }
 
   @override
@@ -95,14 +114,19 @@ class _FileCacheSampleState extends State<FileCacheSample> {
           if (snapshot.hasError) {
             return Text(snapshot.error.toString());
           }
-          return const Text('LOADING...');
+          return Center(
+            child: Text(
+              'DOWNLOADING ${widget.additionalKeyName != null ? 'WITH ADDITIONAL KEY  ${widget.additionalKeyName}' : ''}...',
+            ),
+          );
         },
       ),
     );
   }
 
-  Future<File> getFile() {
-    return NetworkFileCached.downloadFile(widget.url);
+  Future<File> getFile(String? additionalKeyName) {
+    return NetworkFileCached.downloadFile(widget.url,
+        additionalKeyName: additionalKeyName);
   }
 }
 
