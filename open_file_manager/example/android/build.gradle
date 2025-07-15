@@ -1,16 +1,6 @@
-buildscript {
-    ext.kotlin_version = '1.7.10'
-    repositories {
-        google()
-        mavenCentral()
-    }
-
-    dependencies {
-        classpath 'com.android.tools.build:gradle:7.2.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-    }
-}
-
+// Menentukan group dan version untuk seluruh proyek
+group = 'com.aubergine.open_file_manager'
+version = '1.0-SNAPSHOT'
 allprojects {
     repositories {
         google()

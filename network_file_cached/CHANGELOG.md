@@ -27,3 +27,7 @@
 ## 0.0.7
 
 * Fix: Unknown hive register adapter
+
+## 0.0.8
+
+* Add: Additional key name to save file cached 
