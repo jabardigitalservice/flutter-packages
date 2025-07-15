@@ -1,0 +1,16 @@
+dartdoc:
+  categories:
+    "Installation":
+      markdown: README.md
+      name: Installation
+    "Flutter Client Sdk":
+      name: FlutterClientSdk
+  categoryOrder: ["Installation", "Flutter Client Sdk"]
+  examplePathPrefix: '/example'
+  showUndocumentedCategories: false
+  ignore:
+    - ambiguous-doc-reference
+  errors:
+    - unresolved-doc-reference
+  warnings:
+    - tool-error
