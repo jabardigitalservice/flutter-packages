@@ -38,34 +38,29 @@ class MultiFrc {
       await Firebase.initializeApp(name: osOption.projectId, options: osOption);
       if (kIsWeb) continue;
 
-      // init frc listener
+      // init FRC instance
       final instance = FirebaseRemoteConfig.instanceFor(
         app: Firebase.app(osOption.projectId),
       );
+
+      // set instance config settings
+      instance.setConfigSettings(RemoteConfigSettings(
+          fetchTimeout: Duration(seconds: 60),
+          minimumFetchInterval: Duration.zero));
+
+      // fetch remote config
       await instance.fetchAndActivate();
-
-      instance.onConfigUpdated.listen((event) async {
-        await instance.activate();
-        for (var key in event.updatedKeys) {
-          final streamIndex = streams.indexWhere((e) => e.key == key);
-          if (streamIndex == -1) continue;
-
-          final rcValue = instance.getValue(key);
-          final newValue = switch (streams[streamIndex].type) {
-            FrcValueType.string => rcValue.asString(),
-            FrcValueType.number => rcValue.asDouble(),
-            FrcValueType.bool => rcValue.asBool(),
-            FrcValueType.json => jsonDecode(rcValue.asString()),
-          };
-          Future.microtask(() => streams[streamIndex].controller.add(newValue));
-        }
-      });
     }
   }
 
   /// get apps
   static List<FirebaseApp> apps(String? name) {
     return name == null ? Firebase.apps : [Firebase.app(name)];
+  }
+
+  static FirebaseRemoteConfig instance(String? appName) {
+    final app = Firebase.app(appName ?? defaultFirebaseAppName);
+    return FirebaseRemoteConfig.instanceFor(app: app);
   }
 
   /// Fetch string from any firebase apps
@@ -172,7 +167,7 @@ class MultiFrc {
   }) {
     return _getFrcValueAsStream<List>(
       key,
-      FrcValueType.json,
+      FrcValueType.array,
       appName: appName,
     );
   }
@@ -257,6 +252,7 @@ class MultiFrc {
           FrcValueType.number => rcValue.asDouble(),
           FrcValueType.bool => rcValue.asBool(),
           FrcValueType.json => jsonDecode(rcValue.asString()),
+          FrcValueType.array => jsonDecode(rcValue.asString()),
         };
         controller.add(value as T);
       });

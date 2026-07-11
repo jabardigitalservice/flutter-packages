@@ -1,39 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:multi_frc/multi_frc.dart';
 
+final apiKey = '';
+final appIdAndroid = '';
+final appIdIos = '';
+final messagingSenderId = '';
+final projectId = '';
+final storageBucket = '';
+final iosBundleId = '';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  final apiKey = '';
-  final appIdAndroid = '';
-  final appIdIos = '';
-  final messagingSenderId = '';
-  final projectId = '';
-  final storageBucket = '';
-  final iosBundleId = '';
-
-  await MultiFrc.init(
-    [
-      MultiFrcOption(
-        android: MultiFrc.option(
-          apiKey: apiKey,
-          appId: appIdAndroid,
-          messagingSenderId: messagingSenderId,
-          projectId: projectId,
-          storageBucket: storageBucket,
-        ),
-        ios: MultiFrc.option(
-          apiKey: apiKey,
-          appId: appIdIos,
-          messagingSenderId: messagingSenderId,
-          projectId: projectId,
-          storageBucket: storageBucket,
-          iosBundleId: iosBundleId,
-        ),
-        web: null,
+  await MultiFrc.init([
+    MultiFrcOption(
+      android: MultiFrc.option(
+        apiKey: apiKey,
+        appId: appIdAndroid,
+        messagingSenderId: messagingSenderId,
+        projectId: projectId,
+        storageBucket: storageBucket,
       ),
-    ],
-  );
+      ios: MultiFrc.option(
+        apiKey: apiKey,
+        appId: appIdIos,
+        messagingSenderId: messagingSenderId,
+        projectId: projectId,
+        storageBucket: storageBucket,
+        iosBundleId: iosBundleId,
+      ),
+      web: null,
+    ),
+  ]);
 
   runApp(const MyApp());
 }
@@ -68,6 +66,11 @@ class _MyHomePageState extends State<MyHomePage> {
   void initState() {
     super.initState();
     showBtnStream.listen((e) => debugPrint('$e'));
+
+    // log remote config
+    final rc = MultiFrc.instance(projectId);
+    debugPrint('lastFetchStatus: ${rc.lastFetchStatus.name}');
+    debugPrint('lastFetchTime: ${rc.lastFetchTime.toIso8601String()}');
   }
 
   @override
@@ -83,19 +86,13 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(widget.title)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Lets count: ${counting.join(', ')}!',
-            ),
-            const Text(
-              'You have pushed the button this many times:',
-            ),
+            Text('Lets count: ${counting.join(', ')}!'),
+            const Text('You have pushed the button this many times:'),
             Text(
               '$keyword $_counter',
               style: Theme.of(context).textTheme.headlineMedium,
